@@ -47,6 +47,8 @@
             };
             shellHook = ''
               eval "$(dotenvx get --format eval-export)"
+              uv sync --frozen
+              source .venv/bin/activate
             '';
           };
       };
