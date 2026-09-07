@@ -15,3 +15,6 @@
 # python
 .venv/
 .ropeproject/
+
+# jupyter
+.ipynb_checkpoints/
