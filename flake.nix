@@ -23,6 +23,14 @@
                 hyperref
               ]
             );
+            python-toolchain = pkgs.python3.withPackages (
+              ps: with ps; [
+                ipykernel
+                jupyterlab
+                matplotlib
+                numpy
+              ]
+            );
           in
           pkgs.mkShell {
             buildInputs = with pkgs; [
@@ -36,7 +44,7 @@
               texlive-toolchain
               texlab
               # python
-              python3
+              python-toolchain
               ruff
               ty
               uv
@@ -47,8 +55,6 @@
             };
             shellHook = ''
               eval "$(dotenvx get --format eval-export)"
-              uv sync --frozen
-              source .venv/bin/activate
             '';
           };
       };
