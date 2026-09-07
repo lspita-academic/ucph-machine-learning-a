@@ -14,6 +14,13 @@
             texlive-toolchain = pkgs.texliveSmall.withPackages (
               ps: with ps; [
                 latexmk
+                a4wide
+                lipsum
+                amsfonts
+                amsmath
+                xcolor
+                listings
+                hyperref
               ]
             );
           in

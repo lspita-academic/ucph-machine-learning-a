@@ -3,4 +3,13 @@
 .direnv/
 
 # latexmk
-/*.pdf
+*.pdf
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.toc
+
+# python
+.venv/
