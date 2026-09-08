@@ -60,14 +60,55 @@
 
 % Enumerator environment, add items as needed
 \begin{enumerate}
-    \item item 1
-    \item item 2
-    \item \dots
+    \item The features I would include in the input space $\mathcal{X}$ would be:
+        \begin{itemize}
+            \item The current GPA of the student $x_\text{gpa} \in [0, 1]$, which provides a good estimate
+            of the general performance of the candidate.
+            \item The fields of study $x_\text{field} \in \{0, 1\}^k$, where $k$ is
+            the number of fields of study, since students with knowledge in related
+            fields are more likely to perform well in the course.
+            \item $n$ pairs of features, one for each existing course, containing
+            whether the student attended it $x_\text{attended} \in \{0, 1\}$ and the final grade he obtained,
+            with a value of $x_\text{grade} \in [0, 1]$ so that it is independent of any specific grading scale.
+            This could help detect more specific correlations between a certain final
+            grade in the ML course and other subjects than just including the GPA,
+            that averages all subjects.
+        \end{itemize}
+        Combining all that, the final input space would be
+        $\mathcal{X} = [0, 1] \times \{0, 1\}^k \times \{0, 1\}^n \times [0, 1]^n$.
+    \item The label space would be $\mathcal{Y} = [0, 1]$ such that
+        the value can then easily be converted into any preferred grading scale.
+    \item Considering the label space $\mathcal{Y} = [0, 1]$, this
+        would give an infinite number of options, making this problem a regression one.
+        A squared error loss function $\ell(y, \hat{y}) = (y - \hat{y})^2$
+        makes the most sense since we can calculate the actual difference between
+        the predicted and the real grade.
+    \item The distance measure used for this problem could be a simple Euclidean
+        distance, given by the norm of the difference between the two vectors
+        representing the student's features $d(x, x') = \left|\left|x - x'\right|\right|$.
+    \item The most important rule to evaluate a model is to avoid biased results
+        caused by the reuse of data. So my evaluation process would consist of 3 phases:
+        \begin{enumerate}
+            \item Take the first part of my dataset $\mathcal{S}_1$ to train the model and get a
+                hypothesis class $\mathcal H = \{ h_i: \mathcal{X} \rightarrow \mathcal{Y} \}$
+                for $i = 1, \dots, M$.
+            \item Take the second part of my dataset $\mathcal{S}_2(|\mathcal{S}_2| = N)$
+                to select the hypothesis with the lowest average error.
+                $$
+                \begin{aligned}
+                r_i &= \mathcal{R}_{S_2}(h_i) = \frac{1}{N} \sum_{j=1}^{N} \ell(y_j, h_i(x_j)) & \forall\, i = 1, \dots, M \\
+                h_{i^*} &\in \mathcal{H} \text{ with } i^* = \operatorname{arg\,min}_{i} r_i &
+                \end{aligned}
+                $$
+            \item Take the third and final part of my dataset $\mathcal{S}_3$ to evaluate the selected
+                hypothesis $h_{i^*}$ by seeing the average error on new and unbiased data.
+        \end{enumerate}
+    \item The main issue that I could expect is that the university could update,
+        add or remove courses, making the model obsolete fast. A solution to that
+        would be to train the model on a fixed schedule to be up to date with new
+        data, but if a course was changed or added recently it would be difficult
+        to have enough data to re-train the model.
 \end{enumerate}
-
-
-
-
 
 \section{Digits Classification with K Nearest Neighbors (40 points)}
 
