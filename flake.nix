@@ -27,6 +27,8 @@
               ps: with ps; [
                 ipykernel
                 jupyterlab
+                jupyter
+                notebook
                 matplotlib
                 numpy
               ]
