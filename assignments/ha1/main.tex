@@ -251,13 +251,85 @@ def knn(training_points, training_labels, test_points, test_labels, rng=RNG):
 
 \subsection{Task 1 (5 points)}
 
+\begin{lstlisting}
+def linear_regression(X, y):
+    X_bias = np.hstack((X, np.ones((X.shape[0], 1))))
+    X_dagger = np.linalg.pinv(X_bias)
+    w_bias = X_dagger @ y
+    w, b = w_bias[:-1], w_bias[-1]
+    f = lambda X: (X @ w) + b # since we operate on the whole matrix, w.T @ x becomes X @ w
+    return w, b, f
+\end{lstlisting}
+
+A function to calculate the mean squared error is also define to verify the results
+
+\begin{lstlisting}
+def mean_squared_error(y, y_hat):
+    return np.mean((y - y_hat) ** 2)
+\end{lstlisting}
+
+Usage:
+
+\begin{lstlisting}
+w, b, h = linear_regression(X, y)
+y_hat = h(X)
+mse = mean_squared_error(y, y_hat)
+\end{lstlisting}
+
+Results:
+$$
+\begin{aligned}
+    a &= 1.558 \\
+    b &= -1.452 \\
+    MSE &= 24.801
+\end{aligned}
+$$
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{regression/plots/linear_regression.png}
+    \caption{Linear regression}
+    \label{fig:linear_regression}
+\end{figure}
+
 \subsection{Task 2 (10 points)}
+
+\begin{lstlisting}
+y_ln = np.log(y)
+w_ln, b_ln, h_ln = linear_regression(X, y_ln)
+y_hat_exp = np.exp(h_ln(X))
+mse_exp = mean_squared_error(y, y_hat_exp)
+\end{lstlisting}
+
+Results:
+$$
+\begin{aligned}
+    a &= 0.259 \\
+    b &= 0.031 \\
+    MSE &= 34.836
+\end{aligned}
+$$
 
 \subsection{Task 3 (10 points)}
 
 \subsection{Task 4 (5 points)}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{regression/plots/non_linear_exp_regression.png}
+    \caption{Non-linear $h(x) = exp(ax + b)$ regression}
+    \label{fig:non_linear_exp_regression}
+\end{figure}
+
 \subsection{Task 5 (10 points)}
+
+\begin{lstlisting}
+def r2_score(y, y_hat):
+    y_bar = np.mean(y)
+    return 1 - (np.sum((y - y_hat) ** 2) / np.sum((y - y_bar) ** 2))
+
+r2_exp = r2_score(y, y_hat_exp)
+\end{lstlisting}
 
 The coefficient of determination $R^2$ indicates how well the model performs compared
 to its average error.
@@ -270,6 +342,40 @@ to its average error.
 	performs worse than always picking the average.
 \end{itemize}
 
+The coefficient of determination of the non-linear model $h(x) = exp(ax+b)$ is $R^2 = 0.357$.
+
 \subsection{Task 6 (10 points)}
+
+\begin{lstlisting}
+y_ln = np.log(y)
+X_sqrt = np.sqrt(X)
+w_sqrt_ln, b_sqrt_ln, h_sqrt_ln = linear_regression(X_sqrt, y_ln)
+y_hat_sqrt_exp = np.exp(h_sqrt_ln(X_sqrt))
+
+mse_sqrt_exp = mean_squared_error(y, y_hat_sqrt_exp)
+r2_sqrt_exp = r2_score(y, y_hat_sqrt_exp)
+\end{lstlisting}
+
+Results:
+$$
+\begin{aligned}
+    a &= 1.199 \\
+    b &= -1.194 \\
+    MSE &= 28.084
+\end{aligned}
+$$
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{regression/plots/non_linear_sqrt_exp_regression.png}
+    \caption{Non-linear $h(x) = exp(a\sqrt{x} + b)$ regression}
+    \label{fig:non_linear_sqrt_exp_regression}
+\end{figure}
+
+The coefficient of determination of the non-linear model $h(x) = exp(a\sqrt{x}+b)$ is $R^2 = 0.482$.
+The improved $R^2$ score demonstrates that the underlying relationship is closer
+to a square-root dependency than a strictly linear one. Because this new feature
+space captures the data's trajectory more accurately, the resulting model fits
+the data better, reducing the mean squared error.
 
 \end{document}
