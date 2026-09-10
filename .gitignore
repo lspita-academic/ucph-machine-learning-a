@@ -3,7 +3,6 @@
 .direnv/
 
 # latexmk
-*.pdf
 *.aux
 *.fdb_latexmk
 *.fls

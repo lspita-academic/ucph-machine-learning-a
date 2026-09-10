@@ -11,6 +11,8 @@
 \usepackage{xcolor}  % For a colorfull presentation
 \usepackage{listings}  % For presenting code
 
+\usepackage{float}
+
 \usepackage{hyperref}
 
 % Definition of a style for code, matter of taste
@@ -45,6 +47,24 @@
   frame=single,
 }
 \lstset{style=mystyle}
+
+% Placeholder figure
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.5\linewidth]{example-image}
+%     \caption{\lipsum[1][1-3]} % Dummy caption generated using lipsum
+%     \label{fig:placeholder}
+% \end{figure}
+
+% Placeholder code
+% \begin{lstlisting}
+% # Example code
+% # Creating an example array
+% data = np.array([5, 2, 8, 1, 6])
+
+% # Calculating cumulative sum using cumsum
+% cumulative_sum = np.cumsum(data)
+% \end{lstlisting}
 
 \begin{document}
 \title{Machine Learning A (2026)\\Home Assignment 1}
@@ -114,11 +134,118 @@
 
 \subsection{Task \#1}
 
+\subsubsection{K-NN Implementation}
+
+A \emph{rng} parameter is added to have consistent results by providing
+the random generator for tie breaks. The signature of the function is
+still compatible with the requirements of the assignment since a default global
+generator is used by default.
+
+\begin{lstlisting}
+def knn(training_points, training_labels, test_points, test_labels, rng=RNG):
+    # rename to match the assignment notations
+    X_train = training_points
+    X_targ = test_points
+    d, m = X_train.shape
+    _, n = X_targ.shape
+
+    assert X_targ.shape == (d, n)
+    assert training_labels.shape == (m,)
+    assert test_labels.shape == (n,)
+
+    # compute the distances matrix
+    XTX_train_diag = np.diag(X_train.T @ X_train).reshape(-1, 1)
+    XTX_targ_diag = np.diag(X_targ.T @ X_targ).reshape(-1, 1)
+    ones_n = np.ones((n, 1))
+    ones_m = np.ones((m, 1))
+    D = (
+        (XTX_train_diag @ ones_n.T)
+        - (2 * X_train.T @ X_targ)
+        + (ones_m @ XTX_targ_diag.T)
+    )
+    assert D.shape == (m, n)
+
+    # by mapping the labels {5, 6} to {-1, 1},
+    # we can use the sum of the labels to determine the majority vote
+    def labels_to_y(labels):
+        return np.where(labels == 5, -1, 1)
+
+    Y_train = labels_to_y(training_labels)
+    Y_targ = labels_to_y(test_labels)
+
+    distances_sorted_idx = np.argsort(D, axis=0)
+    Y_train_sorted = Y_train[distances_sorted_idx]
+    Y_train_running_sum = np.cumsum(Y_train_sorted, axis=0)
+
+    # since the labels are {-1, 1}, the sign of the running sum gives the majority vote,
+    # and we can break ties by randomly choosing a label
+    tie_break = rng.choice([-1, 1], size=Y_train_running_sum.shape)
+    prediction = np.where(
+        Y_train_running_sum == 0, tie_break, np.sign(Y_train_running_sum)
+    )
+
+    # compare to the true labels and compute the accuracy for each K
+    correct = prediction != Y_targ.T
+    error_per_K = np.mean(correct, axis=1)
+    return error_per_K
+\end{lstlisting}
+
+\subsubsection{K-NN validation error for different values of \emph{n}}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{knn/plots/knn_validation_error_n_10.png}
+    \caption{K-NN validation error with n = 10}
+    \label{fig:knn-validation-error-n-10}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{knn/plots/knn_validation_error_n_20.png}
+    \caption{K-NN validation error with n = 20}
+    \label{fig:knn-validation-error-n-20}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{knn/plots/knn_validation_error_n_40.png}
+    \caption{K-NN validation error with n = 40}
+    \label{fig:knn-validation-error-n-40}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{knn/plots/knn_validation_error_n_80.png}
+    \caption{K-NN validation error with n = 80}
+    \label{fig:knn-validation-error-n-80}
+\end{figure}
+
+\subsubsection{K-NN variance of validation error over 5 data sets}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{knn/plots/knn_validation_error_variance.png}
+    \caption{K-NN validation error variance}
+    \label{fig:knn-validation-error-variance}
+\end{figure}
+
+\subsubsection{Questions}
+
+\begin{itemize}
+    \item As the validation set size \emph{n} grows, the validation error computed
+    on each of the five sets becomes a more reliable estimate of the true risk
+    $\mathcal{R}(h)$. The variance of the validation error shrinks as the sample
+    size increases, consistent with $\mathcal{R}_S(h)$ being an unbiased estimator
+    of $\mathcal{R}(h)$.
+    \item For small values of \emph{K}, the classifier tends to suffer of overfitting
+    problems because of non-representative training points. As \emph{K} increases,
+    noise is averaged out and generalization improves. If \emph{K} becomes to large,
+    locality principles are lost, and the model predicts the majority class in the
+    entire dataset instead of only the neighbors of the training point. Therefore,
+    the optimal value of \emph{K} lies in between $1$ and $m$.
+\end{itemize}
+
 \subsection{Task \#2 (optional, not for submission)}
-
-
-
-
 
 \section{Regression (50 points)}
 
@@ -133,30 +260,5 @@
 \subsection{Task 5 (10 points)}
 
 \subsection{Task 6 (10 points)}
-
-
-
-
-% Placeholder figure
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=0.5\linewidth]{example-image}
-%     \caption{\lipsum[1][1-3]} % Dummy caption generated using lipsum
-%     \label{fig:placeholder}
-% \end{figure}
-
-
-
-% Placeholder code
-\begin{lstlisting}
-# Example code
-# Creating an example array
-data = np.array([5, 2, 8, 1, 6])
-
-# Calculating cumulative sum using cumsum
-cumulative_sum = np.cumsum(data)
-\end{lstlisting}
-
-
 
 \end{document}
