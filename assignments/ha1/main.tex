@@ -259,6 +259,17 @@ def knn(training_points, training_labels, test_points, test_labels, rng=RNG):
 
 \subsection{Task 5 (10 points)}
 
+The coefficient of determination $R^2$ indicates how well the model performs compared
+to its average error.
+\begin{itemize}
+	\item $R^2 = 1$: the numerator is $0$, so the model fits the data perfectly with
+	no error.
+	\item $R^2 = 0$: the numerator and denominator are equal, so the model predicts
+	exactly like always picking the average label.
+	\item $R^2 < 0$: the numerator is bigger than the denominator, so the model
+	performs worse than always picking the average.
+\end{itemize}
+
 \subsection{Task 6 (10 points)}
 
 \end{document}
