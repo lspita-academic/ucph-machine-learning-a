@@ -3,6 +3,8 @@
 \usepackage{a4wide}
 \usepackage{amsfonts}
 \usepackage{amsmath}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
 \usepackage{amssymb}
 \usepackage{lipsum}
 
@@ -117,7 +119,7 @@
                 $$
                 \begin{aligned}
                 r_i &= \mathcal{R}_{S_2}(h_i) = \frac{1}{N} \sum_{j=1}^{N} \ell(y_j, h_i(x_j)) & \forall\, i = 1, \dots, M \\
-                h_{i^*} &\in \mathcal{H} \text{ with } i^* = \operatorname{arg\,min}_{i} r_i &
+                h_{i^*} &\in \mathcal{H} \text{ with } i^* = \argmin_{i} r_i &
                 \end{aligned}
                 $$
             \item Take the third and final part of my dataset $\mathcal{S}_3$ to evaluate the selected
@@ -311,6 +313,48 @@ $$
 $$
 
 \subsection{Task 3 (10 points)}
+
+We want to show that
+$$
+\argmin_{a,b} \sum_{i=1}^{N} (y_i - h(x_i))^2 \;\neq\; \argmin_{a,b} \sum_{i=1}^{N}
+(\ln y_i - (a x_i + b))^2,
+$$
+where $h(x) = \exp(ax+b)$.
+
+Lets consider a data set with two points, $S = \{(x_1, y_1), (x_2, y_2)\}$, where:
+$$
+\begin{aligned}
+& x_1 = x_2 = 0 \\
+& y_1 = e^{-1}, y_2 = e^{1}.
+\end{aligned}
+$$
+
+Since $x_1 = x_2 = 0$, the model $h'(x) = ax + b$ evaluates to the same value
+regardless of $a$. So in both fitting problems we are choosing a single constant
+prediction of $b$ for the two points.
+
+First we minimize on the original scale
+$$
+\begin{aligned}
+    \sum_{i=1}^{N} (y_i - h(x_i))^2 &= (y_1 - exp(b))^2 + (y_2 - exp(b))^2 \\
+    \frac{d}{db} &= -2(y_1 - \exp(b)) - 2(y_2 - \exp(b)) = 0 \\
+        \implies & \exp(b) = \frac{e^{-1} + e^{1}}{2} \approx 1.543
+\end{aligned}
+$$
+
+Then we minimize on the logarithmic scale
+$$
+\begin{aligned}
+    \sum_{i=1}^{N} (\ln y_i - (a x_i + b))^2 &= (\ln y_1 - b)^2 + (\ln y_2 - b)^2 \\
+    \frac{d}{db} &= -2(\ln y_1 - b) - 2(\ln y_2 - b) = 0 \\
+        \implies & b = \frac{-1 + 1}{2} = 0
+\end{aligned}
+$$
+
+\paragraph{Conclusion.} The optimal constant fit on the original scale is
+$b \approx 1.543$, while the optimal constant fit obtained via the log-transformed
+objective is $h(0) = 1$. Since $1.543 \neq 1$, the parameters minimizing
+$\sum_i (y_i - h(x_i))^2$ differ from those minimizing $\sum_i (\ln y_i - (ax_i+b))^2$.
 
 \subsection{Task 4 (5 points)}
 
