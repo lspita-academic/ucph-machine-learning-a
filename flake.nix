@@ -21,6 +21,7 @@
                 xcolor
                 listings
                 hyperref
+                cleveref
               ]
             );
             python-toolchain = pkgs.python3.withPackages (

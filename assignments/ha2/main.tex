@@ -5,6 +5,8 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{lipsum}
+\usepackage{hyperref}
+\usepackage{cleveref}
 
 \usepackage{graphicx}  % For including images
 
@@ -48,7 +50,7 @@
 
 \begin{document}
 \title{Machine Learning A (2026)\\Home Assignment 2}
-\author{\color{red}Your name and student ID}
+\author{\color{red}Ludovico Maria Spitaleri, DMH249}
 \date{}
 \maketitle
 
@@ -56,34 +58,131 @@
 \tableofcontents % Generates the table of contents
 \newpage % Start a new page after the table of contents
 
+% % Placeholder figure
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.5\linewidth]{example-image}
+%     \caption{\lipsum[1][1-3]} % Dummy caption generated using lipsum
+%     \label{fig:placeholder}
+% \end{figure}
+
+
+
+% % Placeholder code
+% \begin{lstlisting}
+% # Example code
+% # Creating an example array
+% data = np.array([5, 2, 8, 1, 6])
+
+% # Calculating cumulative sum using cumsum
+% cumulative_sum = np.cumsum(data)
+% \end{lstlisting}
+
 \section{Preprocessing (35 points)}
 
-  \subsection{Importance of Preprocessing (8 points)}
+\subsection{Importance of Preprocessing (8 points)}
 
-  \subsection{Input Centering (9 points)}
+The nearest neighbor to C is B, so BoL should not give hime credit according to
+the algorithm.
 
-  \subsubsection{(a)}
+$$
+\begin{aligned}
+A: & \sqrt{(21-47)^2 + (36-35)^2} & \approx 26.02 \\
+B: & \sqrt{(21-22)^2 + (36-40)^2} & \approx 4.12
+\end{aligned}
+$$
 
-  \subsubsection{(b)}
+If instead the income is measured in dollars, A would be the nearest
+neighbor, so BoL should give C credit.
 
+$$
+\begin{aligned}
+A: & \sqrt{(21-47)^2 + (36000 - 35000)^2} & \approx 1000.34 \\
+B: & \sqrt{(21-22)^2 + (36000 - 40000)^2} & \approx 4000.00
+\end{aligned}
+$$
 
-  \subsection{Input Whitening (18 points)}
+This is because Eucledian distance is not scale-invariant.
 
-  \subsubsection{(a)}
+\subsection{Input Centering (9 points)}
 
-  \subsubsection{(b)}
+\subsubsection{(a)}
 
-  \subsubsection{(c)}
+$$
+\begin{aligned}
+z_n = x_n - \bar{x} & \implies Z = X - \mathbf{1}\bar{x}^\top \\
+& = X - \mathbf{1} \left( \frac{1}{N}X^\top \mathbf{1} \right)^\top \\
+& = X - \frac{1}{N}\mathbf{1}\mathbf{1}^\top X \\
+& = \left(I - \frac{1}{N}\mathbf{1}\mathbf{1}^\top\right)X \\
+& = \gamma X
+\end{aligned}
+$$
 
-  \subsubsection{(d)}
+\subsubsection{(b)}
 
+{\color{red}TODO}
 
+\subsection{Input Whitening (18 points)}
 
+\subsubsection{(a)}
+
+$$
+\begin{aligned}
+Var(x_1) & = Var(\hat{x}_1) = 1 \\
+Var(x_2) & = Var(\sqrt{1-\epsilon^2}\hat{x}_1 + \epsilon \hat{x}_2) \\
+    & = (1-\epsilon^2) Var(\hat{x}_1) + \epsilon^2 Var(\hat{x}_2) \\
+    & = (1-\epsilon^2)(1) + \epsilon^2(1) \\
+    & = 1 \\
+Cov(x_1, x_2) & = Cov(\hat{x}_1, \sqrt{1-\epsilon^2}\hat{x}_1 + \epsilon \hat{x}_2) \\
+    & = \sqrt{1-\epsilon^2}Cov(\hat{x}_1, \hat{x}_1) + \epsilon Cov(\hat{x}_1, \hat{x}_2) \\
+    & = \sqrt{1-\epsilon^2}(1) + 0 \\
+    & = \sqrt{1-\epsilon^2}
+\end{aligned}
+$$
+
+\subsubsection{(b)}
+\label{sssec:input-whitening-b}
+
+$$
+\begin{aligned}
+\hat{x}_1 = x_1, \, \hat{x}_2 = \frac{x_2 - \sqrt{1-\epsilon^2}x_1}{\epsilon} \implies
+f(x) & = \hat{w}_1(x_1) + \hat{w}_2\left(\frac{x_2 - \sqrt{1-\epsilon^2}x_1}{\epsilon}\right) \\
+    & = \left(\hat{w}_1 - \hat{w}_2\frac{\sqrt{1-\epsilon^2}}{\epsilon}\right)x_1 + \left(\frac{\hat{w}_2}{\epsilon}\right)x_2 \\
+    \implies w_1 = \hat{w}_1 - \hat{w}_2\frac{\sqrt{1-\epsilon^2}}{\epsilon} \,, \quad w_2 = \frac{\hat{w}_2}{\epsilon}
+\end{aligned}
+$$
+
+\subsubsection{(c)}
+
+$$
+f(\hat{x}) = \hat{x}_1 + \hat{x}_2 \implies \hat{w}_1 = 1, \, \hat{w}_2 = 1
+$$
+
+Plugging these into our equations from \cref{sssec:input-whitening-b}:
+
+$$
+w_1 = 1 - \frac{\sqrt{1-\epsilon^2}}{\epsilon}, \quad w_2 = \frac{1}{\epsilon}
+$$
+
+The minimum $C$ needed for the constraint $w_1^2 + w_2^2 \le C$ is exactly $w_1^2 + w_2^2$:
+
+$$
+\begin{aligned}
+C_{min} & = \left(1 - \frac{\sqrt{1-\epsilon^2}}{\epsilon}\right)^2 + \left(\frac{1}{\epsilon}\right)^2 \\
+    & = 1 - 2\frac{\sqrt{1-\epsilon^2}}{\epsilon} + \frac{1-\epsilon^2}{\epsilon^2} + \frac{1}{\epsilon^2} \\
+    & = 1 - 2\frac{\sqrt{1-\epsilon^2}}{\epsilon} + \frac{2-\epsilon^2}{\epsilon^2} \\
+    & = 1 - 2\frac{\sqrt{1-\epsilon^2}}{\epsilon} + \frac{2}{\epsilon^2} - 1 \\
+    & = \frac{2}{\epsilon^2} - \frac{2\sqrt{1-\epsilon^2}}{\epsilon}
+\end{aligned}
+$$
+
+\subsubsection{(d)}
+
+As $\epsilon \to 0$, the dominant term $\frac{2}{\epsilon^2}$ prevails and $C_{min} \to \infty$.
+This means that as inputs become highly correlated, the weights required to construct
+the target function become infinitely large.
 
 \section{Hoeffding's Bound (15 points)}
-
-
-
 
 \section{Illustration of Markov's, Chebyshev's, and Hoeffding's Inequalities (25 points)}
 
@@ -104,34 +203,5 @@
 \paragraph{7.}
 
 \paragraph{3.b [optional, 0 points]}
-
-
-
-
-
-
-
-
-% Placeholder figure
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.5\linewidth]{example-image}
-    \caption{\lipsum[1][1-3]} % Dummy caption generated using lipsum
-    \label{fig:placeholder}
-\end{figure}
-
-
-
-% Placeholder code
-\begin{lstlisting}
-# Example code
-# Creating an example array
-data = np.array([5, 2, 8, 1, 6])
-
-# Calculating cumulative sum using cumsum
-cumulative_sum = np.cumsum(data)
-\end{lstlisting}
-
-
 
 \end{document}
