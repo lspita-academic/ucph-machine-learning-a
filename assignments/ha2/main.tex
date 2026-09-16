@@ -184,6 +184,24 @@ the target function become infinitely large.
 
 \section{Hoeffding's Bound (15 points)}
 
+$$
+\begin{aligned}
+\mathbb{E}[X] & = \frac{-2 + 0.8 + 1}{3} = \frac{-0.2}{3} = -\frac{1}{15} \\
+\mathbb{E}[S] & = N\mathbb{E}[X] = -\frac{100}{15} = -\frac{20}{3} \\
+X \in [a, b] & \text{ with } a = -2, b = 1 \\
+\mathbb{P}(S > 22) & \implies \mathbb{P}(S - \mathbb{E}[S] > 22 - \mathbb{E}[S]) \\ \\
+& = \mathbb{P}\left(S - \mathbb{E}[S] > \frac{86}{3}\right)
+\end{aligned}
+$$
+
+Using Hoeffding's Inequality for sums:
+
+$$
+\mathbb{P}\left(S - \mathbb{E}[S] \ge \frac{86}{3}\right)
+\le \exp\left(-\frac{2 \cdot (\frac{86}{3})^2}{100 \cdot 3^2}\right)
+\approx 0.1610
+$$
+
 \section{Illustration of Markov's, Chebyshev's, and Hoeffding's Inequalities (25 points)}
 
 \paragraph{3.a}
