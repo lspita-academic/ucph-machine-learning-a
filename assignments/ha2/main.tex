@@ -13,6 +13,7 @@
 \usepackage{xcolor}  % For a colorfull presentation
 \usepackage{listings}  % For presenting code
 
+\usepackage{float}
 \usepackage{hyperref}
 
 % Definition of a style for code, matter of taste
@@ -120,8 +121,6 @@ $$
 
 \subsubsection{(b)}
 
-{\color{red}TODO}
-
 \subsection{Input Whitening (18 points)}
 
 \subsubsection{(a)}
@@ -202,23 +201,120 @@ $$
 \approx 0.1610
 $$
 
+\newpage
+
 \section{Illustration of Markov's, Chebyshev's, and Hoeffding's Inequalities (25 points)}
 
 \paragraph{3.a}
 
 \paragraph{1.}
 
+\begin{lstlisting}
+alphas = np.arange(0.5, 1 + 0.05, 0.05) # add step to endpoint to be inclusive
+empirical_freq = np.array([np.mean(sample_means >= a) for a in alphas])
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{illustration-of-inequalities/plots/ef.png}
+    \caption{Empirical frequency of Bernoulli sample means exceeding $\alpha$}
+    \label{fig:ef}
+\end{figure}
+
 \paragraph{2.}
+
+Since each $X_i \in \{0,1\}$, the sum $\sum_{i=1}^{20} X_i$ can only result in
+$0, 1, \dots, 20$, and the sample mean in $0, 0.05, 0.10, \dots, 1$.
+Therefore, taking $\alpha = 0.51$ instead of $\alpha = 0.5$ gives exactly the same
+probability as $\alpha = 0.55$.
+
+\newpage
 
 \paragraph{3.}
 
+\begin{lstlisting}
+def markov_bound(alphas, expected_value):
+    return np.minimum(expected_value / alphas, 1.0)
+
+mean_X = p
+markov = markov_bound(alphas, mean_X)
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{illustration-of-inequalities/plots/ef_markov.png}
+    \caption{Empirical frequency and Markov's bound of Bernoulli sample means exceeding $\alpha$}
+    \label{fig:ef_markov}
+\end{figure}
+
+\newpage
+
 \paragraph{4.}
+
+\begin{lstlisting}
+def chebyshev_bound(alphas, mean, var, n):
+    # P(|X - E[X]| >= eps) => we use eps = a - E[X]
+    eps = alphas - mean
+    bound = np.where(eps > 0, var / (n * np.square(eps)), 1.0)
+    return np.minimum(bound, 1.0)
+
+var_X = p * (1 - p)
+chebyshev = chebyshev_bound(alphas, mean_X, var_X, n)
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{illustration-of-inequalities/plots/ef_markov_chebyshev.png}
+    \caption{Empirical frequency, Markov's bound and Chebyshev's bound of Bernoulli sample means exceeding $\alpha$}
+    \label{fig:ef_markov_chebyshev}
+\end{figure}
+
+\newpage
 
 \paragraph{5.}
 
+\begin{lstlisting}
+def hoeffding_bound(alphas, mean, n):
+    eps = alphas - mean
+    bound = np.where(eps > 0, np.exp(-2 * n * np.square(eps)), 1.0)
+    return np.minimum(bound, 1.0)
+
+hoeffding = hoeffding_bound(alphas, mean_X, n)
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{illustration-of-inequalities/plots/ef_markov_chebyshev_hoeffding.png}
+    \caption{Empirical frequency, Markov's bound, Chebyshev's bound and Hoeffding's bound of Bernoulli sample means exceeding $\alpha$}
+    \label{fig:ef_markov_chebyshev_hoeffding}
+\end{figure}
+
 \paragraph{6.}
 
+The empirical frequency is by far the smallest curve, decaying sharply as
+$\alpha$ grows past the mean $p = 0.35$. All three bounds lie above (or
+match) the true probability for every $\alpha$, with some differences:
+
+\begin{itemize}
+    \item \textbf{Markov's bound} is the loosest by a wide margin, as it only
+    decays as $1/\alpha$.
+    \item \textbf{Chebyshev's bound} is tighter than Markov's for most of the
+    range, since it additionally exploits the variance of the samples, but it
+    still decays only polynomially in $\alpha$.
+    \item \textbf{Hoeffding's bound} is by far the tightest of the three, because
+    it decays exponentially in $n(\alpha - p)^2$.
+\end{itemize}
+
 \paragraph{7.}
+
+$$
+\begin{aligned}
+\sum_{i=1}^{20} X_i \sim \mathrm{Binomial}(20, 0.35) & \implies
+\mathbb{P}(\hat{\mu} \ge \alpha) = \mathbb{P}\!\left(\sum_i X_i \ge 20\alpha\right) \\
+\mathbb{P}(\hat{\mu} \ge 1) &= \mathbb{P}\!\left(\textstyle\sum_i X_i \ge 20\right) \approx 7.610 \times 10^{-10} \\
+\mathbb{P}(\hat{\mu} \ge 0.95) &= \mathbb{P}\!\left(\textstyle\sum_i X_i \ge 19\right) \approx 2.903 \times 10^{-8}
+\end{aligned}
+$$
 
 \paragraph{3.b [optional, 0 points]}
 

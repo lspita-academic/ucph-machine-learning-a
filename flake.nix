@@ -32,6 +32,7 @@
                 notebook
                 matplotlib
                 numpy
+                scipy
               ]
             );
           in
