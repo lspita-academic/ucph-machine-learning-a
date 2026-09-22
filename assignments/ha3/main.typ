@@ -45,8 +45,8 @@ Mapping back to the original space $Y$, the optimal classification rule in the o
 The expected risk (0-1 loss) is the probability of misclassification:
 $
   R & = P(h(X) != Y) \
-    & = sum_(x_i) P(X = x) P(h(x) != Y | X = x) \
-    & = sum_(x_i) P(X = x) P(Y = 0 | X = x) \
+    & = sum_(x in X) P(X = x) P(h(x) != Y | X = x) \
+    & = sum_(x in X) P(X = x) P(Y = 0 | X = x) \
     & = 0.5 dot 0 + 0.5 dot 0.2 = 0.1
 $
 
@@ -64,7 +64,7 @@ $
 The total expected risk is therefore:
 $
   R & = P(h(X) != Y) \
-    & = sum_(x_i) P(X = x) P(h(x) != Y | X = x) \
+    & = sum_(x in X) P(X = x) P(h(x) != Y | X = x) \
     & = 0.5 dot 0 + 0.5 dot 0.32 = 0.16
 $
 
