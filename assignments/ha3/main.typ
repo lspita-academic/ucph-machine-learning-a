@@ -28,7 +28,7 @@ $
 
 The classification rule in the mapped space is:
 $
-  hat(y') = h'(x) = op("sgn")(delta'(x))
+  h'(x) = op("sgn")(delta'(x))
 $
 
 Evaluating this for the given inputs:
@@ -40,7 +40,7 @@ $
   => h'(x) = -1
 $
 
-Mapping back to the original space $Y$, the optimal classification rule in the original space is $hat(y) = h(x) = 0$.
+Mapping back to the original space $Y$, the optimal classification rule in the original space is $h(x) = 0$.
 
 The expected risk (0-1 loss) is the probability of misclassification:
 $
@@ -52,7 +52,21 @@ $
 
 == Question 2
 
-// Write your answer here.
+In the case of $X = 0$, the probabilistic classifier still always predicts the correct label $Y = 0$, since $P(Y = 0 | X = 0) = 1$.
+
+On the other hand, when considering $X = 1$ the expected risk is given by the probability of a mismatch between the classifier and the true label:
+$
+  & P(h(x) != Y | X = 1) \
+    & space = P(h(x) = 0 | X = 1)P(Y = 1 | X = 1) + P(h(x) = 1 | X = 1)P(Y = 0 | X = 1) \
+    & space = 0.8 dot 0.2 + 0.2 dot 0.8 = 0.32
+$
+
+The total expected risk is therefore:
+$
+  R & = P(h(X) != Y) \
+    & = sum_(x_i) P(X = x) P(h(x) != Y | X = x) \
+    & = 0.5 dot 0 + 0.5 dot 0.32 = 0.16
+$
 
 == Question 3
 
