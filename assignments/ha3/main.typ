@@ -19,7 +19,36 @@
 
 == Question 1
 
-// Write your answer here.
+Let us map the original label space $Y in {0, 1}$ to a new space $Y' in {-1, 1}$ following the original probabilities table for $X$ and $Y$.
+
+We define our decision function based on the original probabilities:
+$
+  delta'(x) = P(Y' = 1 | X = x) - P(Y' = -1 | X = x)
+$
+
+The classification rule in the mapped space is:
+$
+  hat(y') = h'(x) = op("sgn")(delta'(x))
+$
+
+Evaluating this for the given inputs:
+$
+  cases(
+    delta'(0) = 0 - 1 = -1 => h'(0) = op("sgn")(-1) = -1 & space "if" x = 0,
+    delta'(1) = 0.2 - 0.8 = -0.6 => h'(1) = op("sgn")(-0.6) = -1 & space "if" x = 1
+  ) \ \
+  => h'(x) = -1
+$
+
+Mapping back to the original space $Y$, the optimal classification rule in the original space is $hat(y) = h(x) = 0$.
+
+The expected risk (0-1 loss) is the probability of misclassification:
+$
+  R & = P(h(X) != Y) \
+    & = sum_(x_i) P(X = x) P(h(x) != Y | X = x) \
+    & = sum_(x_i) P(X = x) P(Y = 0 | X = x) \
+    & = 0.5 dot 0 + 0.5 dot 0.2 = 0.1
+$
 
 == Question 2
 
