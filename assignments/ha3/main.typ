@@ -17,7 +17,7 @@
 
 = Optimal Classification (16 points)
 
-== Question 1
+== Question 1 <q1.1>
 
 Let us map the original label space $Y in {0, 1}$ to a new space $Y' in {-1, 1}$ following the original probabilities table for $X$ and $Y$.
 
@@ -70,8 +70,10 @@ $
 
 == Question 3
 
-// Write your answer/proof here.
-
+No, it is not possible to find a better classifier than the best one previously found, that is the deterministic classifier defined in @q1.1[section]. This is because by mapping the label space to $Y' = {-1, 1}$ the risk of this classifier corresponds to the Bayes risk, known to be the minimum overll all possible measurable functions $h$.
+$
+  h^("Bayes")(x) = op("sgn")[EE_(p)(Y | X = x)]
+$
 
 = Logistic Regression (50 points)
 
