@@ -114,7 +114,7 @@ $
 
 The library `pandas` is used to load the datasets from the csv files. The classes frequencies are then calculated directly using `numpy`.
 
-```python
+```py
 counts_train = np.bincount(y_train)
 freq_train = counts_train / counts_train.sum()
 ```
@@ -137,6 +137,7 @@ lr = LogisticRegression(max_iter=150).fit(X_train, y_train)
 lr_train_err = np.mean(lr.predict(X_train) != y_train)
 lr_test_err = np.mean(lr.predict(X_test) != y_test)
 ```
+
 Errors:
 - Training set: $0.1496$
 - Test set: $0.0993$
