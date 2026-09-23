@@ -128,8 +128,18 @@ freq_train = counts_train / counts_train.sum()
 
 === Logistic regression
 
-// Deliverables: description of software used; training and test errors;
-// description of regularization and model selection process, if used.
+The `LogisticRegression` class from `sklearn` is used to fit a model to the training dataset. For both the train and test datasets, the prediction of the model is compared to the original labels to calculate the average error.
+
+Regularization was not performed.
+
+```py
+lr = LogisticRegression(max_iter=150).fit(X_train, y_train)
+lr_train_err = np.mean(lr.predict(X_train) != y_train)
+lr_test_err = np.mean(lr.predict(X_test) != y_test)
+```
+Errors:
+- Training set: $0.1496$
+- Test set: $0.0993$
 
 === Random forest
 
