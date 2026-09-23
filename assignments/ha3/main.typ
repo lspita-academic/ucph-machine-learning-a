@@ -57,8 +57,8 @@ In the case of $X = 0$, the probabilistic classifier still always predicts the c
 On the other hand, when considering $X = 1$ the expected risk is given by the probability of a mismatch between the classifier and the true label:
 $
   & P(h(x) != Y | X = 1) \
-    & space = P(h(x) = 0 | X = 1)P(Y = 1 | X = 1) + P(h(x) = 1 | X = 1)P(Y = 0 | X = 1) \
-    & space = 0.8 dot 0.2 + 0.2 dot 0.8 = 0.32
+  & space = P(h(x) = 0 | X = 1)P(Y = 1 | X = 1) + P(h(x) = 1 | X = 1)P(Y = 0 | X = 1) \
+  & space = 0.8 dot 0.2 + 0.2 dot 0.8 = 0.32
 $
 
 The total expected risk is therefore:
@@ -144,8 +144,26 @@ Errors:
 
 === Random forest
 
-// Deliverables: description of software used; training and test errors;
-// out-of-bag error; description of regularization and model selection process, if used.
+The `RandomForestClassifier` class from `sklearn.ensemble` is used to fit a model to the training dataset. For both the train and test datasets, the prediction of the model is compared to the original labels to calculate the average error. The out-of-bag error is instead calculated as $1-"oob score"$.
+
+Regularization was not performed.
+
+```py
+rf = RandomForestClassifier(n_estimators=ntrees, oob_score=True).fit(X_train, y_train)
+rf_train_err = np.mean(rf.predict(X_train) != y_train)
+rf_test_err = np.mean(rf.predict(X_test) != y_test)
+rf_oob_err = 1 - rf.oob_score_
+```
+
+Errors:
+
+#table(
+  columns: 4,
+  table.header[*Trees*][*Training err*][*Test err*][*OOB err*],
+  [*50*], [$0.0004$], [$0.1132$], [$0.1519$],
+  [*100*], [$2.9652 dot 10^(-5)$], [$0.1101$], [$0.1495$],
+  [*200*], [$0$], [$0.1099$], [$0.1481$],
+)
 
 === Nearest neighbor
 
