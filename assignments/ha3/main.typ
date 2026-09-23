@@ -112,8 +112,17 @@ $
 
 == Data understanding and preprocessing (4 points)
 
-// Deliverables: description of software used; frequency of classes.
+The library `pandas` is used to load the datasets from the csv files. The classes frequencies are then calculated directly using `numpy`.
 
+```python
+counts_train = np.bincount(y_train)
+freq_train = counts_train / counts_train.sum()
+```
+
+#figure(
+  image("src/plots/classes_freqs.png", width: 70%),
+  caption: [Classes frequencies bar chart],
+) <fig:classes_freq_bar_chart>
 
 == Classification (30 points)
 
@@ -136,20 +145,3 @@ $
 = Overfitting (optional, 0 points)
 
 // Optional reflection.
-
-
-// -----------------------------------------------------------------------------
-// Optional examples for including figures and short code snippets in the report.
-// Delete or adapt them as needed. Do not include your full source code in the PDF.
-// -----------------------------------------------------------------------------
-
-// Example figure:
-// #figure(
-//   image("your-figure-file.png", width: 70%),
-//   caption: [Your caption.],
-// ) <fig:your-label>
-
-// Example short code snippet:
-// ```python
-// # Include only short, selected snippets when useful or requested.
-// ```
