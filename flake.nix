@@ -33,6 +33,8 @@
                 matplotlib
                 numpy
                 scipy
+                pandas
+                scikit-learn
               ]
             );
           in
