@@ -128,14 +128,14 @@ freq_train = counts_train / counts_train.sum()
 
 === Logistic regression
 
-The `LogisticRegression` class from `sklearn` is used to fit a model to the training dataset. For both the train and test datasets, the prediction of the model is compared to the original labels to calculate the average error.
+The `LogisticRegression` class from `sklearn` is used to fit a model to the training dataset. For both the train and test datasets, the error is computed using the appropriate labels.
 
 Regularization was not performed.
 
 ```py
 lr = LogisticRegression(max_iter=150).fit(X_train, y_train)
-lr_train_err = np.mean(lr.predict(X_train) != y_train)
-lr_test_err = np.mean(lr.predict(X_test) != y_test)
+lr_train_err = 1 - lr.score(X_train, y_train)
+lr_test_err = 1 - lr.score(X_test, y_test)
 ```
 
 Errors:
@@ -144,14 +144,14 @@ Errors:
 
 === Random forest
 
-The `RandomForestClassifier` class from `sklearn.ensemble` is used to fit a model to the training dataset. For both the train and test datasets, the prediction of the model is compared to the original labels to calculate the average error. The out-of-bag error is instead calculated as $1-"oob score"$.
+The `RandomForestClassifier` class from `sklearn.ensemble` is used to fit a model to the training dataset. For both the train and test datasets, the error is computed using the appropriate labels. The out-of-bag error is also included.
 
 Regularization was not performed.
 
 ```py
 rf = RandomForestClassifier(n_estimators=ntrees, oob_score=True).fit(X_train, y_train)
-rf_train_err = np.mean(rf.predict(X_train) != y_train)
-rf_test_err = np.mean(rf.predict(X_test) != y_test)
+rf_train_err = 1 - rf.score(X_train, y_train)
+rf_test_err = 1 - rf.score(X_test, y_test)
 rf_oob_err = 1 - rf.oob_score_
 ```
 
