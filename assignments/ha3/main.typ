@@ -2,6 +2,17 @@
 #set text(size: 12pt)
 #set heading(numbering: "1.1")
 
+// code style
+#show raw: set text(font: "DejaVu Sans Mono", size: 8pt)
+#set raw(tab-size: 4)
+#show raw.where(block: true): block.with(
+  fill: rgb("#F7F7F7"),
+  stroke: 0.5pt + rgb("#EEEEEE"),
+  inset: 8pt,
+  radius: 2pt,
+  width: 100%,
+)
+
 #align(center)[
   #text(size: 17pt, weight: "bold")[
     Machine Learning A (2026--2027) \
@@ -122,13 +133,13 @@ freq_train = counts_train / counts_train.sum()
 #figure(
   image("src/plots/classes_freqs.png", width: 70%),
   caption: [Classes frequencies bar chart],
-) <fig:classes_freq_bar_chart>
+) <fig:classes_freqs>
 
 == Classification (30 points)
 
 === Logistic regression
 
-The `LogisticRegression` class from `sklearn` is used to fit a model to the training dataset. For both the train and test datasets, the error is computed using the appropriate labels.
+The `LogisticRegression` class from `sklearn` is used to fit a model to the training dataset using logistic regression. For both the train and test datasets, the error is computed using the appropriate labels.
 
 Regularization was not performed.
 
@@ -144,7 +155,7 @@ Errors:
 
 === Random forest
 
-The `RandomForestClassifier` class from `sklearn.ensemble` is used to fit a model to the training dataset. For both the train and test datasets, the error is computed using the appropriate labels. The out-of-bag error is also included.
+The `RandomForestClassifier` class from `sklearn.ensemble` is used to fit a model to the training dataset using random forests. For both the train and test datasets, the error is computed using the appropriate labels. The out-of-bag error is also included.
 
 Regularization was not performed.
 
@@ -167,9 +178,43 @@ Errors:
 
 === Nearest neighbor
 
-// Deliverables: description of software used; training and test errors;
-// description of regularization and model selection process, if used.
+The `KNeighborsClassifier` class from `sklearn.neighbors` is used to fit a model to the training dataset using k-nn classification.
 
+First cross-validation is performed to determine the optimal value of `K`. Only odd values are used as candidates to avoid ties as much as possible. The range of values choosen is $[1, 200]$.
+
+For each value of $K$, 5-fold cross validation is performed, then the candidate with the best average error across the folds is choosen as the optimal value of $K$.
+
+```py
+ks = np.arange(1, 202, 2)
+cv = KFold(n_splits=5)
+k_errs = []
+for k in ks:
+    knn = KNeighborsClassifier(n_neighbors=k)
+    cv_errs = 1 - cross_val_score(knn, X_train, y_train, cv=cv)
+    k_errs.append(np.mean(cv_errs))
+K_idx = np.argmin(k_errs)
+K = ks[K_idx]
+K_err = k_errs[K_idx]
+```
+
+#figure(
+  image("src/plots/cv_errs.png", width: 70%),
+  caption: [Cross validation errors, with the best value for $K$ highlighted],
+) <fig:cv_errs>
+
+For both the train and test datasets, the error is computed using the appropriate labels.
+
+Regularization was not performed.
+
+```py
+knn = KNeighborsClassifier(n_neighbors=K).fit(X_train, y_train)
+knn_train_err = 1 - knn.score(X_train, y_train)
+knn_test_err = 1 - knn.score(X_test, y_test)
+```
+
+Errors:
+- Training set: $0.1503$
+- Test set: $0.0957$
 
 = Overfitting (optional, 0 points)
 
