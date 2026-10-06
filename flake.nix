@@ -35,6 +35,7 @@
                 scipy
                 pandas
                 scikit-learn
+                torchvision
               ]
             );
           in
