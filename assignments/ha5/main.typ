@@ -97,13 +97,27 @@ The final map $G$ is unaffected by this choice, since it only depends on $G_x^2$
 
 ```python
 class Net(nn.Module):
-    def __init__(self, img_size=28):
+    def __init__(
+        self,
+        img_size=28,
+        in_channels=3,  # r, g, b
+        n_maps=64,
+        kernel_size=5,
+        pool_size=2,
+        n_classes=43,
+    ):
         super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=5)    # 28x28 -> 24x24
-        self.pool1 = nn.MaxPool2d(2)                    # 24x24 -> 12x12
-        self.conv2 = nn.Conv2d(64, 64, kernel_size=5)   # 12x12 -> 8x8
-        self.pool2 = nn.MaxPool2d(2)                    # 8x8   -> 4x4
-        self.fc2 = nn.Linear(64 * 4 * 4, 43)            # 1024 -> 43
+
+        self.conv1 = nn.Conv2d(in_channels, n_maps, kernel_size=kernel_size)
+        size = img_size - kernel_size + 1
+        self.pool1 = nn.MaxPool2d(pool_size)
+        size = size // pool_size
+        self.conv2 = nn.Conv2d(n_maps, n_maps, kernel_size=kernel_size)
+        size = size - kernel_size + 1
+        self.pool2 = nn.MaxPool2d(pool_size)
+        size = size // pool_size
+
+        self.fc2 = nn.Linear(n_maps * size * size, n_classes)
 
     def forward(self, x):
         x = self.pool1(F.elu(self.conv1(x)))
@@ -112,7 +126,16 @@ class Net(nn.Module):
         return self.fc2(x)
 ```
 
-The input crops are $28 times 28$. Each $5 times 5$ convolution without padding removes 4 pixels per dimension, and each pooling halves the size: $28 -> 24 -> 12 -> 8 -> 4$. This gives $64 dot 4 dot 4 = 1024$ inputs to the fully-connected layer, matching `in_features=1024`. The output layer returns logits (no softmax), since `CrossEntropyLoss` applies it internally.
+Printing the model gives the expected output:
+```
+Net(
+  (conv1): Conv2d(3, 64, kernel_size=(5, 5), stride=(1, 1))
+  (pool1): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (conv2): Conv2d(64, 64, kernel_size=(5, 5), stride=(1, 1))
+  (pool2): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (fc2): Linear(in_features=1024, out_features=43, bias=True)
+)
+```
 
 == Augmentation #authorpoints("Christian, W5 Friday", 22)
 
