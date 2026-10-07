@@ -139,24 +139,24 @@ Net(
 
 == Augmentation #authorpoints("Christian, W5 Friday", 22)
 
-*Transformations in the original code.* During training, each image is (1) resized to $32 times 32$, (2) randomly rotated by an angle in $[-5°, 5°]$ (`RandomAffine((-5,5))`), (3) randomly cropped to $28 times 28$ (a random translation of up to 4 pixels), (4) colour-jittered (brightness factor in $[0.2, 1.8]$, contrast factor in $[0.6, 1.4]$), and (5) for some classes (11, 12, 13, 17, 18, 26, 30, 35), horizontally flipped with probability 0.5. At test time only the resize and a deterministic centre crop are applied.
+During training, each image is
++ resized to $32 times 32$
++ randomly rotated by an angle between $[-5°, 5°]$
++ randomly cropped to $28 times 28$
++ colour-jittered with a brightness factor between $[0.2, 1.8]$ and contrast factor between $[0.6, 1.4]$
++ if it's part of the classes $11, 12, 13, 17, 18, 26, 30, 35$, the image is horizontally flipped with probability 0.5.
 
-*Why is the flip conditioned on the label?* Augmentation must not change the label. Signs of classes 11, 12, 13, 17, 18, 26, 30 and 35 (right-of-way, priority road, yield, no entry, general caution, traffic signals, ice/snow, ahead only) are (approximately) mirror-symmetric, so a flipped image still shows the same class. For other classes a flip changes the meaning: a "turn left ahead" sign becomes a "turn right ahead" sign, and flipping a speed limit produces mirrored digits that never occur in real data. Flipping those would introduce label noise or unrealistic inputs.
+If not training, all images are just cropped to $28 times 28$ in the center to have a consistent size with the training images.
 
-*Additional transformations.* I added two transformations to `__getitem__` (after the original ones):
+Since augmentation must not change the label, only signs of classes 11, 12, 13, 17, 18, 26, 30 and 35 are horizontally flipped. This is because they are almost symmetric, so a flipped image still shows the same class. For other classes a flip changes the meaning: a flipped arrow becomes the opposite direction, or a speed limit could have a wrong number on it after the transformation.
+
+An extra useful transformations that could be added in the training is a change in the prespective:
 
 ```python
-# in the training branch, before the random crop
 image = transforms.RandomPerspective(distortion_scale=0.15, p=0.5)(image)
-...
-# after ToTensor (RandomErasing operates on tensors)
-image = transforms.RandomErasing(p=0.25, scale=(0.02, 0.08), ratio=(0.3, 3.3), value=0)(image)
 ```
 
-- *Random perspective:* Cars see signs from different positions and angles, so signs appear skewed in the images. The existing affine transformation only covers small rotations and translations, while a perspective warp approximates changes in viewpoint. Mild distortion (0.15) keeps the sign recognisable.
-- *Random erasing:* The task description lists partial occlusions as a source of variation (trees, dirt, stickers). Erasing a small random patch (2–8% of the image, 25% of the time) forces the network not to rely on a single small region. The patch is kept small so that it rarely removes all information needed for the class.
-
-Both transformations are applied only to the training data; the test pipeline is unchanged.
+This would help the model train on recognizing signs even when not show on a perfect angle. This is a very common situation in real-world driving when encountering signs, especially if on the side of tight curves.
 
 
 // ---------- Placeholder figure with two subfigures ----------

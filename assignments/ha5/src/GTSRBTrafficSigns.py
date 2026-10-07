@@ -50,7 +50,6 @@ class GTSRBTrafficSigns(Dataset):
       
       if self.train:
         image = transforms.RandomAffine((-5,5))(image)
-        # ADDED: random perspective distortion (simulates viewing the sign from a slightly different angle)
         image = transforms.RandomPerspective(distortion_scale=0.15, p=0.5)(image)
         image = transforms.RandomCrop((self.img_width_crop, self.img_height_crop))(image)
         image = transforms.ColorJitter(0.8, contrast = 0.4)(image)
@@ -60,10 +59,6 @@ class GTSRBTrafficSigns(Dataset):
         image = transforms.CenterCrop((self.img_width_crop, self.img_height_crop))(image)
 
       image = transforms.ToTensor()(image)
-
-      if self.train:
-        # ADDED: random erasing of a small patch (simulates partial occlusion, e.g. by leaves, stickers, dirt)
-        image = transforms.RandomErasing(p=0.25, scale=(0.02, 0.08), ratio=(0.3, 3.3), value=0)(image)
 
       return image, label
 
