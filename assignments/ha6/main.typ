@@ -49,6 +49,10 @@
 
 = Function Basis #authorpoints("Christian, W6 Monday", 22)
 
+#figure(
+  image("src/figures/f_mean_plot.png", width: 100%),
+  caption: [Plot of mean function of $f^((k))(#math.cal("X"))$.],
+)
 
 = Sleep Well Revisited #authorpoints("Christian, W6 Monday", 10)
 
